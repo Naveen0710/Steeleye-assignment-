@@ -5,4 +5,3 @@ Basically The List component allows you to display a list of pages or links. You
 
 What problems / warnings are there with code?
 
-
