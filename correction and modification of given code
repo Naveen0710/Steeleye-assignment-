@@ -1,0 +1,73 @@
+import React, { useState, useEffect, memo } from "react";
+import PropTypes from "prop-types";
+
+// Single List Item
+const WrappedSingleListItem = ({ index, isSelected, onClickHandler, text }) => {
+  return (
+    <li
+      style={{
+        // added margin and cursor to avoid overlapping of list items
+        backgroundColor: isSelected ? "green" : "red",
+        margin: "20px",
+        cursor: "pointer",
+      }}
+      onClick={() => onClickHandler(index)} // function invocation instead of function definition
+    >
+      {text}
+    </li>
+  );
+};
+
+WrappedSingleListItem.propTypes = {
+  index: PropTypes.number,
+  isSelected: PropTypes.bool,
+  onClickHandler: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired,
+};
+
+const SingleListItem = memo(WrappedSingleListItem);
+
+// List Component
+const WrappedListComponent = ({ items }) => {
+  const [selectedIndex, setSelectedIndex] = useState(); // changed [setSelectedIndex, selectedIndex] to [selectedIndex, setSelectedIndex] bcz its an array and order matters
+
+  useEffect(() => {
+    setSelectedIndex(null);
+  }, [items]);
+
+  const handleClick = (index) => {
+    setSelectedIndex(index);
+  };
+
+  return (
+    <ul style={{ textAlign: "left" }}>
+      {items.map((item, index) => (
+        <SingleListItem
+          key={index} // added key as every map function need to have a key for each item in the map
+          onClickHandler={handleClick} // passed function definition instead of funtion invocation
+          text={item.text}
+          index={index}
+          isSelected={selectedIndex ? true : false} // sending the bool value insted of number(index) as proptype will be checked
+        />
+      ))}
+    </ul>
+  );
+};
+
+WrappedListComponent.propTypes ={
+  items: PropTypes.arrayOf(
+    // array is changed to arrayOf
+    PropTypes.shape({
+      // shapeOf is changed to shape
+      text: PropTypes.string.isRequired,
+    })
+  ),
+};
+
+WrappedListComponent.defaultProps = {
+  items: null,
+};
+
+const List = memo(WrappedListComponent);
+
+export default List;
